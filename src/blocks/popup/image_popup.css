@@ -1,0 +1,16 @@
+.image-popup__container {
+    position: relative;
+    color: #FFF;
+    margin: 0;
+}
+
+.popup__image {
+    max-width: 75vw;
+    max-height: 75vh;
+}
+
+.popup__caption {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.25;
+}
