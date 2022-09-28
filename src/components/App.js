@@ -9,6 +9,12 @@ import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import DeletePopup from "./DeletePopup";
+import { Route, Switch, Redirect, useHistory } from "react-router-dom";
+import Login from "./Login";
+import Register from "./Register";
+import ProtectedRoute from "./ProtectedRoute";
+import InfoTooltip from "./InfoTooltip";
+import * as auth from "../utils/auth";
 
 function App() {
   //----------------Variables----------------
@@ -17,12 +23,22 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
+
+  const [infoTooltipType, setInfoTooltipType] = useState("");
+
   const [cards, setCards] = useState([]);
-  const [currentUser, setCurrentUser] = useState({});
   const [selectedCard, setSelectedCard] = useState({
     name: "",
     link: "",
   });
+
+  const [currentUser, setCurrentUser] = useState({});
+  const [userData, setUserData] = useState({
+    email: "email@mail.com",
+  });
+  const [loggedIn, setLoggedIn] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
 
   //----------------Hooks----------------
@@ -44,6 +60,28 @@ function App() {
       .catch((err) => console.log(err));
   }, []);
 
+  useEffect(() => {
+    const closeByEscape = (e) => {
+      if (e.key === "Escape") {
+        closeAllPopups();
+      }
+    };
+    const closeByOverlay = (e) => {
+      if (e.target.classList.contains("popup_opened")) {
+        closeAllPopups();
+      }
+    };
+    document.addEventListener("keydown", closeByEscape);
+    document.addEventListener("click", closeByOverlay);
+
+    return () => {
+      document.removeEventListener("keydown", closeByEscape);
+      document.removeEventListener("click", closeByOverlay);
+    };
+  }, []);
+
+  const history = useHistory();
+
   //----------------Event Handlers----------------
   const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
@@ -63,18 +101,8 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsImagePopupOpen(false);
     setIsDeletePopupOpen(false);
+    setIsInfoTooltipOpen(false);
   };
-
-  useEffect(() => {
-    const closeByEscape = (e) => {
-      if (e.key === "Escape") {
-        closeAllPopups();
-      }
-    };
-    document.addEventListener("keydown", closeByEscape);
-
-    return () => document.removeEventListener("keydown", closeByEscape);
-  }, []);
 
   const handleCardClick = (card) => {
     setIsImagePopupOpen(true);
@@ -156,20 +184,92 @@ function App() {
       .finally(() => setIsLoading(false));
   }
 
+  //----------------Login and Register----------------
+  function handleRegister({ email, password }) {
+    setIsLoading(true);
+    auth
+      .register(email, password)
+      .then((res) => {
+        if (res.data._id) {
+          setInfoTooltipType("successful");
+          history.push("/signin");
+        } else {
+          setInfoTooltipType("unsuccessful");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setInfoTooltipType("unsuccessful");
+      })
+      .finally(() => {
+        setIsInfoTooltipOpen(true);
+        setIsLoading(false);
+      });
+  }
+
+  function handleLogin({ email, password }) {
+    setIsLoading(true);
+    auth
+      .login(email, password)
+      .then((res) => {
+        if (res.token) {
+          setLoggedIn(true);
+          setUserData({ email });
+          localStorage.setItem("jwt", res.token);
+          history.push("/react-around-auth");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setInfoTooltipType("unsuccessful");
+        setIsInfoTooltipOpen(true);
+      })
+      .finally(() => setIsLoading(false));
+  }
+
+  function handleSignout() {
+    setLoggedIn(false);
+    localStorage.removeItem("jwt");
+    history.push("/signin");
+  }
+
   return (
     <div className="App">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header />
-
-        <Main
-          onEditProfileClick={handleEditProfileClick}
-          onAddPlaceClick={handleAddPlaceClick}
-          onEditAvatarClick={handleEditAvatarClick}
-          cards={cards}
-          onCardClick={handleCardClick}
-          onCardLike={handleCardLike}
-          onCardDeleteClick={handleCardDeleteClick}
+        <Header
+          loggedIn={loggedIn}
+          email={userData.email}
+          handleSignout={handleSignout}
         />
+        <Switch>
+          <ProtectedRoute exact path="/react-around-auth" loggedIn={loggedIn}>
+            <Main
+              onEditProfileClick={handleEditProfileClick}
+              onAddPlaceClick={handleAddPlaceClick}
+              onEditAvatarClick={handleEditAvatarClick}
+              cards={cards}
+              onCardClick={handleCardClick}
+              onCardLike={handleCardLike}
+              onCardDeleteClick={handleCardDeleteClick}
+            />
+          </ProtectedRoute>
+
+          <Route path="/signup">
+            <Register handleRegister={handleRegister} isLoading={isLoading} />
+          </Route>
+
+          <Route path="/signin">
+            <Login handleLogin={handleLogin} isLoading={isLoading} />
+          </Route>
+
+          <Route>
+            {loggedIn ? (
+              <Redirect to="/react-around-auth" />
+            ) : (
+              <Redirect to="/signin" />
+            )}
+          </Route>
+        </Switch>
 
         <Footer />
 
@@ -205,6 +305,15 @@ function App() {
           card={selectedCard}
           isOpen={isImagePopupOpen}
           onClose={closeAllPopups}
+          name="image"
+        />
+
+        <InfoTooltip
+          isOpen={isInfoTooltipOpen}
+          onClose={closeAllPopups}
+          type={infoTooltipType}
+          isTooltipOpen={isInfoTooltipOpen}
+          name="tooltip"
         />
       </CurrentUserContext.Provider>
     </div>

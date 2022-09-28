@@ -1,88 +1,63 @@
-import React from "react";
-import { Link, withRouter } from "react-router-dom";
-import * as auth from "../auth.js";
-import "./styles/Login.css";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      password: "",
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+const Login = ({ handleLogin, isLoading }) => {
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
 
-  handleChange(e) {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    this.setState({
+    setData({
+      ...data,
       [name]: value,
     });
-  }
+  };
 
-  handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!this.state.email || !this.state.password) {
-      return;
-    }
-    auth
-      .authorize(this.state.email, this.state.password)
-      .then((data) => {
-        if (data.jwt) {
-          this.setState({ email: "", password: "" }, () => {
-            this.props.handleLogin();
-            this.props.history.push("/");
-          });
-        }
-      })
-      .catch((err) => console.log(err));
-  }
+    const { email, password } = data;
+    handleLogin({ email, password });
+  };
 
-  render() {
-    return (
-      <div className="login">
-        <p className="login__welcome">Log in</p>
-        <form onSubmit={this.handleSubmit} className="login__form">
-          <input
-            required
-            id="username"
-            name="username"
-            type="text"
-            value={this.state.username}
-            onChange={this.handleChange}
-            placeholder="Email"
-          />
-          <label htmlFor="password">Password:</label>
-          <input
-            required
-            id="password"
-            name="password"
-            type="password"
-            value={this.state.password}
-            onChange={this.handleChange}
-            placeholder="Password"
-          />
-          <div className="login__button-container">
-            <button
-              type="submit"
-              onSubmit={this.handleSubmit}
-              className="login__link"
-            >
-              Log in
+  return (
+    <div className="auth-form">
+      <h2 className="auth-form__title">Log in</h2>
+      <form className="auth-form__form" onSubmit={handleSubmit}>
+        <input
+          type="email"
+          name="email"
+          className="auth-form__input"
+          placeholder="Email"
+          value={data.email}
+          onChange={handleChange}
+        />
+        <input
+          type="password"
+          name="password"
+          className="auth-form__input"
+          placeholder="Password"
+          value={data.password}
+          onChange={handleChange}
+        />
+
+        <div className="auth-form__footer">
+          <div className="auth-form__footer-wrapper">
+            <button type="submit" className="auth-form__submit-button">
+              {isLoading ? "Logging In..." : "Log in"}
             </button>
+            <p className="auth-form__footer-text">
+              Not a member yet?{" "}
+              <Link to="/signup" className="auth-form__footer-link">
+                Sign up here!
+              </Link>
+            </p>
           </div>
-        </form>
-
-        <div className="login__signup">
-          <p>Not a member yet?</p>
-          <Link to="/register" className="signup__link">
-            Sign up here!
-          </Link>
         </div>
-      </div>
-    );
-  }
-}
+      </form>
+    </div>
+  );
+};
 
-export default withRouter(Login);
+export default Login;

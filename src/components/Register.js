@@ -1,81 +1,63 @@
-import React from "react";
-import { Link, withRouter } from "react-router-dom";
-import * as auth from "../auth.js";
-import * as data from "../data.js";
-import "./styles/Register.css";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-class Register extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      password: "",
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+const Register = ({ handleRegister, isLoading }) => {
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
 
-  handleChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    this.setState({
+    setData({
+      ...data,
       [name]: value,
     });
   };
 
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    auth.register(this.state.email, this.state.password).then((res) => {
-      if (res) {
-        this.props.history.push("/login");
-      } else {
-        console.log("Something went wrong.");
-      }
-    });
+    const { email, password } = data;
+    handleRegister({ email, password });
   };
 
-  render() {
-    return (
-      <div className="register">
-        <p className="register__welcome">Sign up</p>
-        <form onSubmit={this.handleSubmit} className="register__form">
-          <input
-            id="email"
-            name="email"
-            type="email"
-            value={this.state.email}
-            onChange={this.handleChange}
-            placeholder="Email"
-            required
-          />
-          <input
-            id="password"
-            name="password"
-            type="password"
-            value={this.state.password}
-            onChange={this.handleChange}
-            placeholder="Password"
-            required
-          />
-          <div className="register__button-container">
-            <button
-              type="submit"
-              onSubmit={this.handleSubmit}
-              className="register__link"
-            >
-              Sign up
+  return (
+    <div className="auth-form">
+      <h2 className="auth-form__title">Sign up</h2>
+      <form className="auth-form__form" onSubmit={handleSubmit}>
+        <input
+          type="email"
+          name="email"
+          className="auth-form__input"
+          placeholder="Email"
+          value={data.email}
+          onChange={handleChange}
+        />
+        <input
+          type="password"
+          name="password"
+          className="auth-form__input"
+          placeholder="Password"
+          value={data.password}
+          onChange={handleChange}
+        />
+
+        <div className="auth-form__footer">
+          <div className="auth-form__footer-wrapper">
+            <button type="submit" className="auth-form__submit-button">
+              {isLoading ? "Signing Up..." : "Sign Up"}
             </button>
+            <p className="auth-form__footer-text">
+              Already a member?{" "}
+              <Link to="/signin" className="auth-form__footer-link">
+                Log in here!
+              </Link>
+            </p>
           </div>
-        </form>
-
-        <div className="register__signin">
-          <p>Already A member?</p>
-          <Link to="login" className="register__login-link">
-            Log in here!
-          </Link>
         </div>
-      </div>
-    );
-  }
-}
+      </form>
+    </div>
+  );
+};
 
-export default withRouter(Register);
+export default Register;
