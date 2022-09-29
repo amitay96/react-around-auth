@@ -7,14 +7,14 @@ import Popup from "./Popup";
 const InfoTooltip = ({ isOpen, onClose, type }) => {
   const success = type === "successful";
 
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     const timer = setTimeout(() => {
-  //       onClose();
-  //     }, 2500);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [isOpen]);
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   return (
     <Popup isOpen={isOpen} name="tooltip" onClose={onClose}>

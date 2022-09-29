@@ -5,19 +5,12 @@
     margin: 0 auto 40px;
     line-height: 0;
     padding-top: 45px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
-/* .header {
-  max-width: 880px;
-  margin: 45px auto 41px;
-} */
-
-/* .header__container {
-  
-} */
+.header__container {
+  display: flex;
+  justify-content: space-between;
+}
 
 .header__links {
   display: flex;
@@ -29,7 +22,7 @@
   color: white;
 }
 
-.header__links_mobile {
+.header__links_menu {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -55,11 +48,11 @@
   cursor: pointer;
 }
 
-.header__mobile-menu {
+.header__menu {
   display: none;
 }
 
-.header__mobile-menu_opened {
+.header__menu_active {
   display: flex;
   flex-direction: column;
 }
@@ -73,7 +66,7 @@
     display: block;
   }
 
-  .header__links_desktop {
+  .header__links {
     display: none;
   }
 
