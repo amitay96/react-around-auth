@@ -61,23 +61,24 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const closeByEscape = (e) => {
-      if (e.key === "Escape") {
-        closeAllPopups();
-      }
-    };
-    const closeByOverlay = (e) => {
-      if (e.target.classList.contains("popup_opened")) {
-        closeAllPopups();
-      }
-    };
-    document.addEventListener("keydown", closeByEscape);
-    document.addEventListener("click", closeByOverlay);
-
-    return () => {
-      document.removeEventListener("keydown", closeByEscape);
-      document.removeEventListener("click", closeByOverlay);
-    };
+    const jwt = localStorage.getItem("jwt");
+    setIsLoading(true);
+    if (jwt) {
+      auth
+        .checkToken(jwt)
+        .then((res) => {
+          if (res.data._id) {
+            setLoggedIn(true);
+            setUserData({ email: res.data.email });
+            history.push("/react-around-auth");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          history.push("/signin");
+        })
+        .finally(() => setIsLoading(false));
+    }
   }, []);
 
   const history = useHistory();

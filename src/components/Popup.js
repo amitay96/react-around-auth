@@ -1,6 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const Popup = ({ isOpen, name, onClose, children }) => {
+  useEffect(() => {
+    const closeByEscape = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    const closeByOverlay = (e) => {
+      if (e.target.classList.contains("popup__active")) {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", closeByEscape);
+    document.addEventListener("click", closeByOverlay);
+
+    return () => {
+      document.removeEventListener("keydown", closeByEscape);
+      document.removeEventListener("click", closeByOverlay);
+    };
+  }, [isOpen, onClose]);
+
   return (
     <div
       className={`popup popup__type_${name} ${isOpen ? "popup__active" : ""}`}
