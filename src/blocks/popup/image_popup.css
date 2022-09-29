@@ -1,10 +1,7 @@
 .popup__container_type_image {
     background-color: transparent;
-    padding: 0px;
-    border-radius: 0px;
-    /* position: relative; */
+    padding: 0;
     color: #FFF;
-    margin: 0;
 }
 
 .popup__image {

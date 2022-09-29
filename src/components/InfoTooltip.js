@@ -18,18 +18,16 @@ const InfoTooltip = ({ isOpen, onClose, type }) => {
 
   return (
     <Popup isOpen={isOpen} name="tooltip" onClose={onClose}>
-      <div className={"popup__container"}>
-        <img
-          src={success ? successIcon : failedIcon}
-          className="tooltip__image"
-          alt={`${success ? "successful" : "unsuccessful"} attempt`}
-        />
-        <h2 className="tooltip__text">
-          {success
-            ? "Success! You have now been registered."
-            : "Oops, something went wrong! Please try again."}
-        </h2>
-      </div>
+      <img
+        src={success ? successIcon : failedIcon}
+        className="tooltip__image"
+        alt={`${success ? "successful" : "failed"} attempt`}
+      />
+      <h2 className="tooltip__text">
+        {success
+          ? "Success! You have now been registered."
+          : "Oops, something went wrong! Please try again."}
+      </h2>
     </Popup>
   );
 };

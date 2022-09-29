@@ -194,12 +194,12 @@ function App() {
           setInfoTooltipType("successful");
           history.push("/signin");
         } else {
-          setInfoTooltipType("unsuccessful");
+          setInfoTooltipType("failed");
         }
       })
       .catch((err) => {
         console.log(err);
-        setInfoTooltipType("unsuccessful");
+        setInfoTooltipType("failed");
       })
       .finally(() => {
         setIsInfoTooltipOpen(true);
@@ -221,7 +221,7 @@ function App() {
       })
       .catch((err) => {
         console.log(err);
-        setInfoTooltipType("unsuccessful");
+        setInfoTooltipType("failed");
         setIsInfoTooltipOpen(true);
       })
       .finally(() => setIsLoading(false));
