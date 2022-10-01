@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 
 const Popup = ({ isOpen, name, onClose, children }) => {
   useEffect(() => {
+    if (!isOpen) return;
     const closeByEscape = (e) => {
       if (e.key === "Escape") {
         onClose();
@@ -13,11 +14,11 @@ const Popup = ({ isOpen, name, onClose, children }) => {
       }
     };
     document.addEventListener("keydown", closeByEscape);
-    document.addEventListener("click", closeByOverlay);
+    document.addEventListener("mousedown", closeByOverlay);
 
     return () => {
       document.removeEventListener("keydown", closeByEscape);
-      document.removeEventListener("click", closeByOverlay);
+      document.removeEventListener("mousedown", closeByOverlay);
     };
   }, [isOpen, onClose]);
 

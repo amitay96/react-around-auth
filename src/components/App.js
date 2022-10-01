@@ -38,6 +38,7 @@ function App() {
     email: "email@mail.com",
   });
   const [loggedIn, setLoggedIn] = useState(false);
+  const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -62,8 +63,8 @@ function App() {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    setIsLoading(true);
     if (jwt) {
+      setIsLoading(true);
       auth
         .checkToken(jwt)
         .then((res) => {
@@ -80,8 +81,6 @@ function App() {
         .finally(() => setIsLoading(false));
     }
   }, []);
-
-  const history = useHistory();
 
   //----------------Event Handlers----------------
   const handleEditAvatarClick = () => {

@@ -1,23 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useForm } from "../utils/hooks/useForm";
 
 const Register = ({ handleRegister, isLoading }) => {
-  const [data, setData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData({
-      ...data,
-      [name]: value,
-    });
-  };
+  const { values, handleChange } = useForm({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { email, password } = data;
+    const { email, password } = values;
     handleRegister({ email, password });
   };
 
@@ -30,7 +20,7 @@ const Register = ({ handleRegister, isLoading }) => {
           name="email"
           className="auth-form__input"
           placeholder="Email"
-          value={data.email}
+          value={values.email}
           onChange={handleChange}
         />
         <input
@@ -38,7 +28,7 @@ const Register = ({ handleRegister, isLoading }) => {
           name="password"
           className="auth-form__input"
           placeholder="Password"
-          value={data.password}
+          value={values.password}
           onChange={handleChange}
         />
 
