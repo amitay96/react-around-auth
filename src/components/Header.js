@@ -20,6 +20,7 @@ const Header = ({ loggedIn, email, handleSignout }) => {
     <header className="header">
       <Menu
         isMenuOpen={isMenuOpen}
+        toggleMenu={toggleMenu}
         email={email}
         handleSignout={handleSignout}
       />
